@@ -11,35 +11,81 @@
     <header class="header">
         <div class="header-container">
             <h1 class="header-title">Things to buy</h1>
-            <button class="admin-btn" onclick="openAdminPanel()">Admin Panel</button>
+            <div class="header-buttons">
+                <button class="admin-btn" id="adminToggleBtn" onclick="toggleAdminPage()">Admin Panel</button>
+            </div>
         </div>
     </header>
-
-    <!-- Admin Panel Modal -->
-    <div id="adminModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeAdminPanel()">&times;</span>
-            <h2>Admin Panel</h2>
-            <div class="admin-form">
-                <input type="password" id="adminPassword" placeholder="Enter password" />
-                <button onclick="loginAdmin()">Login</button>
-            </div>
-            <div id="adminDashboard" style="display: none;">
-                <h3>Messages from Customers</h3>
-                <div id="messagesList" class="messages-list"></div>
-            </div>
-        </div>
-    </div>
 
     <!-- Separator Line -->
     <div class="separator"></div>
 
     <!-- Main Dashboard -->
-    <main class="dashboard">
+    <main class="dashboard" id="mainDashboard">
         <div class="products-container" id="productsContainer">
             <!-- Products will be loaded here -->
         </div>
     </main>
+
+    <!-- Admin Panel Page -->
+    <div class="admin-page" id="adminPage" style="display: none;">
+        <div class="admin-header">
+            <h2>Admin Dashboard</h2>
+            <div class="admin-top-buttons">
+                <button class="back-btn" onclick="toggleAdminPage()">← Back to Store</button>
+                <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Admin Login Form -->
+        <div id="adminLoginForm" class="admin-login-form">
+            <h3>Enter Admin Password</h3>
+            <div class="admin-form">
+                <input type="password" id="adminPassword" placeholder="Enter password" />
+                <button onclick="loginAdmin()">Login</button>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard Content -->
+        <div id="adminContent" style="display: none;">
+            <div class="admin-content-header">
+                <h3>Customer Orders</h3>
+                <div class="admin-controls">
+                    <button class="btn-clear" onclick="clearAllMessages()" style="margin-left: 10px;">Clear All</button>
+                </div>
+            </div>
+            
+            <!-- Orders Spreadsheet -->
+            <div class="spreadsheet-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Notes</th>
+                            <th>Date/Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <!-- Orders will be loaded here -->
+                    </tbody>
+                </table>
+                <p id="noOrdersMsg" style="text-align: center; color: #999; padding: 40px;">No orders yet</p>
+            </div>
+
+            <!-- Admin Contact Info Display -->
+            <div class="admin-info-section">
+                <h3>Your Contact Information</h3>
+                <div class="contact-display">
+                    <p><strong>Gmail:</strong> <span id="displayGmail">not@set.com</span></p>
+                    <button class="edit-contact-btn" onclick="editContactInfo()">Edit</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Product Details Modal -->
     <div id="productModal" class="modal">

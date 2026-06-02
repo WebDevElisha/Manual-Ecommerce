@@ -1,63 +1,39 @@
-// Sample Products Data
+// Single Product Data
 const products = [
     {
         id: 1,
-        name: "Premium Wireless Headphones",
-        price: 79.99,
-        image: "🎧",
-        description: "High-quality wireless headphones with noise cancellation, 30-hour battery life, and premium sound quality. Perfect for music lovers and professionals.",
-        details: "These premium wireless headphones feature cutting-edge noise cancellation technology, delivering crystal-clear audio whether you're in a bustling city or a quiet office. With a 30-hour battery life, you can enjoy uninterrupted listening for days. The comfortable over-ear design ensures long-wearing comfort, and the intuitive touch controls make it easy to manage your music on the go."
-    },
-    {
-        id: 2,
-        name: "Mechanical Keyboard",
-        price: 129.99,
-        image: "⌨️",
-        description: "RGB mechanical keyboard with customizable switches and aluminum frame. Ideal for gaming and typing enthusiasts.",
-        details: "Experience the ultimate typing experience with this mechanical keyboard featuring customizable RGB lighting, premium aluminum frame, and your choice of mechanical switches. Every keystroke is responsive and satisfying, making it perfect for both gaming marathons and long work sessions. The keyboard includes programmable macros and comes with a detachable USB-C cable."
-    },
-    {
-        id: 3,
-        name: "Portable Power Bank",
-        price: 49.99,
-        image: "🔋",
-        description: "50000mAh portable charger with fast charging capability and dual USB ports. Keep your devices charged anywhere.",
-        details: "Never run out of battery again with this powerful 50000mAh portable power bank. It features dual USB ports for charging two devices simultaneously, fast-charging technology to get your phone ready in minutes, and a sleek compact design that fits perfectly in your backpack. The LED indicator shows battery status at a glance."
-    },
-    {
-        id: 4,
-        name: "4K Webcam",
-        price: 99.99,
-        image: "📹",
-        description: "Ultra HD 4K webcam with auto-focus and built-in microphone. Perfect for streaming and video conferencing.",
-        details: "Stream and video conference in stunning 4K resolution with this professional-grade webcam. The advanced auto-focus ensures you're always crystal clear, while the built-in stereo microphone captures clean audio. Works seamlessly with all major video platforms and includes a universal mounting bracket."
-    },
-    {
-        id: 5,
-        name: "Smart Watch",
-        price: 199.99,
-        image: "⌚",
-        description: "Feature-rich smartwatch with fitness tracking, heart rate monitor, and 7-day battery life.",
-        details: "Stay connected and active with this comprehensive smartwatch. Track your workouts, monitor your heart rate, receive notifications, and stay organized with built-in apps. The 7-day battery life means fewer charging sessions, and the vibrant AMOLED display is perfect for any condition. Water-resistant up to 50 meters."
-    },
-    {
-        id: 6,
-        name: "Compact Laptop Stand",
-        price: 39.99,
-        image: "💻",
-        description: "Adjustable aluminum laptop stand with ergonomic design. Compatible with all laptop sizes.",
-        details: "Elevate your workspace with this sleek aluminum laptop stand. Adjustable to multiple angles for optimal ergonomics, it fits laptops up to 17 inches and provides excellent ventilation. The lightweight yet sturdy construction makes it perfect for both office and travel, and it folds flat for easy portability."
+        name: "How to create a website for free: No code, No experience, Under 1 hour guide!",
+        price: 0,
+        image: "🌐",
+        description: "Build a live, professional site with only Google Sites and Canva — no credit card, no design skills, no hosting fees required!",
+        details: "Build a live, professional site with only Google Sites and Canva — no credit card, no design skills, no hosting fees required! This comprehensive guide will walk you through creating a stunning website in under one hour, perfect for beginners. Learn step-by-step how to use Google Sites' powerful free tools combined with Canva's beautiful design templates to create a professional online presence without spending a dime."
     }
 ];
 
 // Admin messages storage
 let adminMessages = [];
+let adminLoggedIn = false;
+let adminGmail = 'your.email@gmail.com';
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
     loadProducts();
     generateFallingStars();
+    loadAdminData();
 });
+
+// Load admin data from localStorage
+function loadAdminData() {
+    const stored = localStorage.getItem('adminMessages');
+    adminMessages = stored ? JSON.parse(stored) : [];
+    
+    const storedGmail = localStorage.getItem('adminGmail');
+    if (storedGmail) {
+        adminGmail = storedGmail;
+    }
+    
+    document.getElementById('displayGmail').textContent = adminGmail;
+}
 
 // Load products to the dashboard
 function loadProducts() {
@@ -71,13 +47,41 @@ function loadProducts() {
             <div class="product-image">${product.image}</div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
-                <div class="product-price">$${product.price}</div>
+                <div class="product-price">${product.price === 0 ? 'FREE' : '$' + product.price}</div>
                 <div class="product-description">${product.description}</div>
                 <button class="view-btn" onclick="openProductModal(${product.id})">View Details</button>
             </div>
         `;
         container.appendChild(card);
     });
+}
+
+// Toggle between admin page and store
+function toggleAdminPage() {
+    const mainDashboard = document.getElementById('mainDashboard');
+    const adminPage = document.getElementById('adminPage');
+    
+    const isAdminVisible = adminPage.style.display !== 'none';
+    
+    if (isAdminVisible) {
+        // Go back to store
+        adminPage.style.display = 'none';
+        mainDashboard.style.display = 'block';
+        document.body.style.background = '#f5f5f5';
+    } else {
+        // Go to admin
+        mainDashboard.style.display = 'none';
+        adminPage.style.display = 'block';
+        document.body.style.background = '#f5f5f5';
+        
+        if (!adminLoggedIn) {
+            document.getElementById('adminLoginForm').style.display = 'block';
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('adminPassword').focus();
+        } else {
+            displayAdminDashboard();
+        }
+    }
 }
 
 // Open product modal with details
@@ -91,16 +95,26 @@ function openProductModal(productId) {
     details.innerHTML = `
         <div class="product-details-image">${product.image}</div>
         <h2 class="product-details-name">${product.name}</h2>
-        <div class="product-details-price">$${product.price}</div>
+        <div class="product-details-price">${product.price === 0 ? 'FREE' : '$' + product.price}</div>
         <div class="product-details-description">
             <strong>About this product:</strong>
             <p>${product.details}</p>
         </div>
         <div class="contact-info">
             <h4>Contact Information</h4>
-            <p><strong>Email:</strong> <span id="contactEmail">your.email@example.com</span></p>
-            <p><strong>Cash App:</strong> <span id="contactCashApp">$YourCashAppHandle</span></p>
-            <p><strong>Phone:</strong> <span id="contactPhone">+1 (555) 123-4567</span></p>
+            <p><strong>Gmail:</strong> <span id="contactEmail">${adminGmail}</span></p>
+        </div>
+        <div class="quantity-section">
+            <h4>Quantity</h4>
+            <div class="quantity-input-group">
+                <button class="quantity-btn" onclick="decreaseQuantity()">−</button>
+                <input type="number" id="quantityInput" value="1" min="1" />
+                <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+            </div>
+        </div>
+        <div class="notes-section">
+            <h4>Notes (Optional)</h4>
+            <textarea id="notesInput" placeholder="Add any notes or special requests..."></textarea>
         </div>
         <button class="purchase-btn" onclick="showPurchaseConfirmation(${product.id})">Purchase</button>
     `;
@@ -113,10 +127,26 @@ function closeProductModal() {
     document.getElementById('productModal').classList.remove('show');
 }
 
+// Quantity controls
+function increaseQuantity() {
+    const input = document.getElementById('quantityInput');
+    input.value = parseInt(input.value) + 1;
+}
+
+function decreaseQuantity() {
+    const input = document.getElementById('quantityInput');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
 // Show purchase confirmation dialog
 function showPurchaseConfirmation(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
+    
+    const quantity = parseInt(document.getElementById('quantityInput').value);
+    const notes = document.getElementById('notesInput').value;
     
     const modal = document.getElementById('productModal');
     const details = document.getElementById('productDetails');
@@ -124,9 +154,12 @@ function showPurchaseConfirmation(productId) {
     details.innerHTML = `
         <div class="confirmation-modal">
             <h3>Confirm Purchase</h3>
-            <p>Have you sent $${product.price} to the Cash App address provided above?</p>
+            <p>Product: <strong>${product.name}</strong></p>
+            <p>Quantity: <strong>${quantity}</strong></p>
+            ${product.price === 0 ? '<p style="color: #cc0000; font-weight: bold;">This is a FREE product!</p>' : `<p>Total Price: <strong>$${(product.price * quantity).toFixed(2)}</strong></p>`}
+            <p>Have you completed your payment?</p>
             <div class="confirmation-buttons">
-                <button class="btn-yes" onclick="processPurchase(${product.id})">Yes, I Sent It</button>
+                <button class="btn-yes" onclick="processPurchase(${product.id}, ${quantity}, '${notes.replace(/'/g, "\\'")})">Yes, I'm Done</button>
                 <button class="btn-no" onclick="openProductModal(${product.id})">No, Go Back</button>
             </div>
         </div>
@@ -134,22 +167,18 @@ function showPurchaseConfirmation(productId) {
 }
 
 // Process purchase and send message
-function processPurchase(productId) {
+function processPurchase(productId, quantity, notes) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
-    
-    // Get contact info
-    const email = document.getElementById('contactEmail')?.innerText || 'Not provided';
-    const cashApp = document.getElementById('contactCashApp')?.innerText || 'Not provided';
-    const phone = document.getElementById('contactPhone')?.innerText || 'Not provided';
     
     // Create message object
     const message = {
         productName: product.name,
         productPrice: product.price,
         productId: product.id,
-        timestamp: new Date().toLocaleString(),
-        buyerNote: 'Customer claims to have sent payment via Cash App'
+        quantity: quantity,
+        notes: notes || 'No notes',
+        timestamp: new Date().toLocaleString()
     };
     
     // Save to admin messages
@@ -162,8 +191,8 @@ function processPurchase(productId) {
         <div class="confirmation-modal">
             <h3>Thank You! 🎉</h3>
             <div class="success-message">
-                <strong>Purchase Confirmed!</strong>
-                <p>Your payment for <strong>${product.name}</strong> has been recorded.</p>
+                <strong>Order Confirmed!</strong>
+                <p>Your order for <strong>${quantity}x ${product.name}</strong> has been recorded.</p>
             </div>
             <p>A message has been sent to the admin. You will be contacted shortly with delivery details.</p>
             <p style="margin-top: 20px; color: #999; font-size: 0.9rem;">
@@ -174,70 +203,108 @@ function processPurchase(productId) {
     `;
 }
 
-// Open admin panel
-function openAdminPanel() {
-    document.getElementById('adminModal').classList.add('show');
-    document.getElementById('adminPassword').focus();
-}
-
-// Close admin panel
-function closeAdminPanel() {
-    document.getElementById('adminModal').classList.remove('show');
-    document.getElementById('adminPassword').value = '';
-    document.getElementById('adminDashboard').style.display = 'none';
-    document.getElementById('adminPassword').parentElement.style.display = 'flex';
-}
-
 // Login to admin panel
 function loginAdmin() {
     const password = document.getElementById('adminPassword').value;
     
     if (password === 'ECOMMERCE44') {
-        // Load messages from localStorage
-        const stored = localStorage.getItem('adminMessages');
-        adminMessages = stored ? JSON.parse(stored) : [];
-        
-        // Show admin dashboard
-        document.getElementById('adminPassword').parentElement.style.display = 'none';
-        document.getElementById('adminDashboard').style.display = 'block';
-        
-        // Display messages
-        displayAdminMessages();
+        adminLoggedIn = true;
+        displayAdminDashboard();
     } else {
         alert('❌ Incorrect password. Access denied.');
         document.getElementById('adminPassword').value = '';
     }
 }
 
-// Display admin messages
-function displayAdminMessages() {
-    const messagesList = document.getElementById('messagesList');
-    messagesList.innerHTML = '';
+// Display admin dashboard
+function displayAdminDashboard() {
+    document.getElementById('adminLoginForm').style.display = 'none';
+    document.getElementById('adminContent').style.display = 'block';
+    
+    const tableBody = document.getElementById('ordersTableBody');
+    const noOrdersMsg = document.getElementById('noOrdersMsg');
+    
+    tableBody.innerHTML = '';
     
     if (adminMessages.length === 0) {
-        messagesList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No messages yet</p>';
+        noOrdersMsg.style.display = 'block';
         return;
     }
     
+    noOrdersMsg.style.display = 'none';
+    
     adminMessages.forEach((msg, index) => {
-        const msgElement = document.createElement('div');
-        msgElement.className = 'message-item';
-        msgElement.innerHTML = `
-            <strong>📦 ${msg.productName}</strong>
-            <p>Price: $${msg.productPrice}</p>
-            <p>Status: Customer claims payment sent via Cash App</p>
-            <small>Received: ${msg.timestamp}</small>
-            <button onclick="deleteMessage(${index})" style="margin-top: 10px; padding: 5px 10px; background-color: #cc0000; color: white; border: none; border-radius: 3px; cursor: pointer;">Delete</button>
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="order-number">${index + 1}</td>
+            <td>${msg.productName}</td>
+            <td>$${msg.productPrice === 0 ? 'FREE' : msg.productPrice.toFixed(2)}</td>
+            <td>
+                <div class="quantity-controls">
+                    <button class="quantity-btn" onclick="decreaseOrderQuantity(${index})">−</button>
+                    <div class="quantity-display">${msg.quantity}</div>
+                    <button class="quantity-btn" onclick="increaseOrderQuantity(${index})">+</button>
+                </div>
+            </td>
+            <td class="notes-cell">${msg.notes || 'No notes'}</td>
+            <td class="time-cell">${msg.timestamp}</td>
+            <td><button class="delete-btn" onclick="deleteMessage(${index})">Delete</button></td>
         `;
-        messagesList.appendChild(msgElement);
+        tableBody.appendChild(row);
     });
+}
+
+// Update quantity in admin
+function increaseOrderQuantity(index) {
+    adminMessages[index].quantity += 1;
+    localStorage.setItem('adminMessages', JSON.stringify(adminMessages));
+    displayAdminDashboard();
+}
+
+function decreaseOrderQuantity(index) {
+    if (adminMessages[index].quantity > 1) {
+        adminMessages[index].quantity -= 1;
+        localStorage.setItem('adminMessages', JSON.stringify(adminMessages));
+        displayAdminDashboard();
+    }
 }
 
 // Delete message
 function deleteMessage(index) {
-    adminMessages.splice(index, 1);
-    localStorage.setItem('adminMessages', JSON.stringify(adminMessages));
-    displayAdminMessages();
+    if (confirm('Are you sure you want to delete this order?')) {
+        adminMessages.splice(index, 1);
+        localStorage.setItem('adminMessages', JSON.stringify(adminMessages));
+        displayAdminDashboard();
+    }
+}
+
+// Clear all messages
+function clearAllMessages() {
+    if (confirm('Are you sure you want to clear ALL orders? This cannot be undone.')) {
+        adminMessages = [];
+        localStorage.setItem('adminMessages', JSON.stringify(adminMessages));
+        displayAdminDashboard();
+    }
+}
+
+// Edit contact info
+function editContactInfo() {
+    const newEmail = prompt('Enter your Gmail address:', adminGmail);
+    if (newEmail && newEmail.trim()) {
+        adminGmail = newEmail.trim();
+        localStorage.setItem('adminGmail', adminGmail);
+        document.getElementById('displayGmail').textContent = adminGmail;
+        alert('✅ Gmail updated successfully!');
+    }
+}
+
+// Logout from admin
+function logoutAdmin() {
+    adminLoggedIn = false;
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminLoginForm').style.display = 'block';
+    document.getElementById('adminContent').style.display = 'none';
+    alert('✅ You have been logged out.');
 }
 
 // Generate falling stars animation
@@ -246,7 +313,7 @@ function generateFallingStars() {
     
     // Create stars periodically for continuous effect
     setInterval(() => {
-        // Only generate stars on pages that should have them
+        // Only generate stars on product pages that should have them
         if (document.getElementById('productModal').classList.contains('show')) {
             const star = document.createElement('div');
             star.className = 'star';
@@ -278,24 +345,16 @@ function generateFallingStars() {
 // Close modal when clicking outside of it
 window.onclick = function(event) {
     const productModal = document.getElementById('productModal');
-    const adminModal = document.getElementById('adminModal');
     
     if (event.target === productModal) {
         closeProductModal();
     }
-    if (event.target === adminModal) {
-        closeAdminPanel();
-    }
 }
 
 // Allow pressing Enter to login
-document.addEventListener('DOMContentLoaded', function() {
-    const passwordInput = document.getElementById('adminPassword');
-    if (passwordInput) {
-        passwordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                loginAdmin();
-            }
-        });
+document.addEventListener('keypress', function(e) {
+    const adminLoginForm = document.getElementById('adminLoginForm');
+    if (adminLoginForm && adminLoginForm.style.display !== 'none' && e.key === 'Enter') {
+        loginAdmin();
     }
 });
