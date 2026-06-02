@@ -100,7 +100,7 @@ function openProductModal(productId) {
             <p>After you click "Yes, I'm Done" below:</p>
             <ol style="text-align: left; margin-left: 20px; color: #333;">
                 <li>Send $${product.price} to my Cash App: <strong>${adminContactInfo.cashApp}</strong></li>
-                <li>DM me on social media confirming your purchase</li>
+                <li>DM me Via any of the contact methods</li>
             </ol>
             <p style="margin-top: 10px; font-weight: bold; color: #1a1a1a;">Contact me via:</p>
             <div style="background-color: white; padding: 10px; border-radius: 5px; margin: 10px 0;">
@@ -127,8 +127,8 @@ function openProductModal(productId) {
             </div>
         </div>
         <div class="notes-section">
-            <h4>Notes (Optional)</h4>
-            <textarea id="notesInput" placeholder="Add any notes or special requests..."></textarea>
+            <h4>Notes (Required for payment confirmation)</h4>
+            <textarea id="notesInput" placeholder="Add any notes or special requests, (you may have dmed me, but what is your cashtag?)"></textarea>
         </div>
         <button class="purchase-btn" onclick="showPurchaseConfirmation(${product.id})">Purchase</button>
     `;
