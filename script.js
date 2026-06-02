@@ -4,7 +4,7 @@ const products = [
         id: 1,
         name: "How to create a website for free: No code, No experience, Under 1 hour guide!",
         price: 7,
-        image: "📷",
+        image: "https://raw.githubusercontent.com/WebDevElisha/Manual-Ecommerce/main/product-image.png",
         description: "Build a live, professional site with only Google Sites and Canva — no credit card, no design skills, no hosting fees required!",
         details: "Build a live, professional site with only Google Sites and Canva — no credit card, no design skills, no hosting fees required! This comprehensive guide will walk you through creating a stunning website in under one hour, perfect for beginners. Learn step-by-step how to use Google Sites' powerful free tools combined with Canva's beautiful design templates to create a professional online presence without spending a dime."
     }
@@ -46,7 +46,7 @@ function loadProducts() {
         const card = document.createElement('div');
         card.className = 'product-card';
         card.innerHTML = `
-            <div class="product-image">${product.image}</div>
+            <div class="product-image"><img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;"></div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
                 <div class="product-price">$${product.price}</div>
@@ -110,7 +110,7 @@ function openProductModal(productId) {
             </div>
         </div>
 
-        <div class="product-details-image">${product.image}</div>
+        <div class="product-details-image"><img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"></div>
         <h2 class="product-details-name">${product.name}</h2>
         <div class="product-details-price">$${product.price}</div>
         <div class="product-details-description">
