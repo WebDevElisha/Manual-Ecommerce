@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Things to buy - E-Commerce Store</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <h1 class="header-title">Things to buy</h1>
+            <button class="admin-btn" onclick="openAdminPanel()">Admin Panel</button>
+        </div>
+    </header>
 
+    <!-- Admin Panel Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAdminPanel()">&times;</span>
+            <h2>Admin Panel</h2>
+            <div class="admin-form">
+                <input type="password" id="adminPassword" placeholder="Enter password" />
+                <button onclick="loginAdmin()">Login</button>
+            </div>
+            <div id="adminDashboard" style="display: none;">
+                <h3>Messages from Customers</h3>
+                <div id="messagesList" class="messages-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Separator Line -->
+    <div class="separator"></div>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+        <div class="products-container" id="productsContainer">
+            <!-- Products will be loaded here -->
+        </div>
+    </main>
+
+    <!-- Product Details Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content product-modal-content">
+            <span class="close" onclick="closeProductModal()">&times;</span>
+            <div class="product-details" id="productDetails">
+                <!-- Product details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Falling Stars Background -->
+    <div class="stars-container" id="starsContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
