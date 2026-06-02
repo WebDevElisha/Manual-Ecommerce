@@ -62,10 +62,11 @@
                         <tr>
                             <th>#</th>
                             <th>Product Name</th>
-                            <th>Price</th>
+                            <th>Total Price</th>
                             <th>Quantity</th>
                             <th>Notes</th>
                             <th>Date/Time</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -80,7 +81,11 @@
             <div class="admin-info-section">
                 <h3>Your Contact Information</h3>
                 <div class="contact-display">
-                    <p><strong>Gmail:</strong> <span id="displayGmail">not@set.com</span></p>
+                    <div style="flex: 1;">
+                        <p><strong>💰 Cash App:</strong> <span id="displayCashApp">$TextmeElisha</span></p>
+                        <p><strong>📧 Gmail:</strong> <span id="displayGmail">TextElisha@gmail.com</span></p>
+                        <p><strong>📱 Phone:</strong> <span id="displayPhone">240-745-5582</span></p>
+                    </div>
                     <button class="edit-contact-btn" onclick="editContactInfo()">Edit</button>
                 </div>
             </div>
@@ -90,7 +95,7 @@
     <!-- Product Details Modal -->
     <div id="productModal" class="modal">
         <div class="modal-content product-modal-content">
-            <span class="close" onclick="closeProductModal()">&times;</span>
+            <span class="close" onclick="closeProductModal()">×</span>
             <div class="product-details" id="productDetails">
                 <!-- Product details will be loaded here -->
             </div>

@@ -3,8 +3,8 @@ const products = [
     {
         id: 1,
         name: "How to create a website for free: No code, No experience, Under 1 hour guide!",
-        price: 0,
-        image: "🌐",
+        price: 7,
+        image: "📷",
         description: "Build a live, professional site with only Google Sites and Canva — no credit card, no design skills, no hosting fees required!",
         details: "Build a live, professional site with only Google Sites and Canva — no credit card, no design skills, no hosting fees required! This comprehensive guide will walk you through creating a stunning website in under one hour, perfect for beginners. Learn step-by-step how to use Google Sites' powerful free tools combined with Canva's beautiful design templates to create a professional online presence without spending a dime."
     }
@@ -13,7 +13,11 @@ const products = [
 // Admin messages storage
 let adminMessages = [];
 let adminLoggedIn = false;
-let adminGmail = 'your.email@gmail.com';
+let adminContactInfo = {
+    cashApp: '$TextmeElisha',
+    gmail: 'TextElisha@gmail.com',
+    phone: '240-745-5582'
+};
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -27,12 +31,10 @@ function loadAdminData() {
     const stored = localStorage.getItem('adminMessages');
     adminMessages = stored ? JSON.parse(stored) : [];
     
-    const storedGmail = localStorage.getItem('adminGmail');
-    if (storedGmail) {
-        adminGmail = storedGmail;
+    const storedContact = localStorage.getItem('adminContactInfo');
+    if (storedContact) {
+        adminContactInfo = JSON.parse(storedContact);
     }
-    
-    document.getElementById('displayGmail').textContent = adminGmail;
 }
 
 // Load products to the dashboard
@@ -47,7 +49,7 @@ function loadProducts() {
             <div class="product-image">${product.image}</div>
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
-                <div class="product-price">${product.price === 0 ? 'FREE' : '$' + product.price}</div>
+                <div class="product-price">$${product.price}</div>
                 <div class="product-description">${product.description}</div>
                 <button class="view-btn" onclick="openProductModal(${product.id})">View Details</button>
             </div>
@@ -93,17 +95,29 @@ function openProductModal(productId) {
     const details = document.getElementById('productDetails');
     
     details.innerHTML = `
+        <div class="payment-instructions-box">
+            <h4>📋 How to Complete Your Purchase</h4>
+            <p>After you click "Yes, I'm Done" below:</p>
+            <ol style="text-align: left; margin-left: 20px; color: #333;">
+                <li>Send $${product.price} to my Cash App: <strong>${adminContactInfo.cashApp}</strong></li>
+                <li>DM me on social media confirming your purchase</li>
+            </ol>
+            <p style="margin-top: 10px; font-weight: bold; color: #1a1a1a;">Contact me via:</p>
+            <div style="background-color: white; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                <p><strong>📱 Phone:</strong> ${adminContactInfo.phone}</p>
+                <p><strong>📧 Gmail:</strong> ${adminContactInfo.gmail}</p>
+                <p><strong>💰 Cash App:</strong> ${adminContactInfo.cashApp}</p>
+            </div>
+        </div>
+
         <div class="product-details-image">${product.image}</div>
         <h2 class="product-details-name">${product.name}</h2>
-        <div class="product-details-price">${product.price === 0 ? 'FREE' : '$' + product.price}</div>
+        <div class="product-details-price">$${product.price}</div>
         <div class="product-details-description">
             <strong>About this product:</strong>
             <p>${product.details}</p>
         </div>
-        <div class="contact-info">
-            <h4>Contact Information</h4>
-            <p><strong>Gmail:</strong> <span id="contactEmail">${adminGmail}</span></p>
-        </div>
+        
         <div class="quantity-section">
             <h4>Quantity</h4>
             <div class="quantity-input-group">
@@ -150,16 +164,18 @@ function showPurchaseConfirmation(productId) {
     
     const modal = document.getElementById('productModal');
     const details = document.getElementById('productDetails');
+    const totalPrice = (product.price * quantity).toFixed(2);
     
     details.innerHTML = `
         <div class="confirmation-modal">
             <h3>Confirm Purchase</h3>
             <p>Product: <strong>${product.name}</strong></p>
             <p>Quantity: <strong>${quantity}</strong></p>
-            ${product.price === 0 ? '<p style="color: #cc0000; font-weight: bold;">This is a FREE product!</p>' : `<p>Total Price: <strong>$${(product.price * quantity).toFixed(2)}</strong></p>`}
-            <p>Have you completed your payment?</p>
+            <p>Total Price: <strong>$${totalPrice}</strong></p>
+            <p style="margin-top: 20px; color: #cc0000; font-weight: bold;">⚠️ Send $${totalPrice} to ${adminContactInfo.cashApp} before confirming!</p>
+            <p>Have you sent the payment?</p>
             <div class="confirmation-buttons">
-                <button class="btn-yes" onclick="processPurchase(${product.id}, ${quantity}, '${notes.replace(/'/g, "\\'")})">Yes, I'm Done</button>
+                <button class="btn-yes" onclick="processPurchase(${product.id}, ${quantity}, '${notes.replace(/'/g, "\\'")}', '${totalPrice}')">Yes, I'm Done</button>
                 <button class="btn-no" onclick="openProductModal(${product.id})">No, Go Back</button>
             </div>
         </div>
@@ -167,7 +183,7 @@ function showPurchaseConfirmation(productId) {
 }
 
 // Process purchase and send message
-function processPurchase(productId, quantity, notes) {
+function processPurchase(productId, quantity, notes, totalPrice) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
     
@@ -175,10 +191,12 @@ function processPurchase(productId, quantity, notes) {
     const message = {
         productName: product.name,
         productPrice: product.price,
+        totalPrice: parseFloat(totalPrice),
         productId: product.id,
         quantity: quantity,
         notes: notes || 'No notes',
-        timestamp: new Date().toLocaleString()
+        timestamp: new Date().toLocaleString(),
+        status: 'Pending Confirmation'
     };
     
     // Save to admin messages
@@ -194,9 +212,16 @@ function processPurchase(productId, quantity, notes) {
                 <strong>Order Confirmed!</strong>
                 <p>Your order for <strong>${quantity}x ${product.name}</strong> has been recorded.</p>
             </div>
-            <p>A message has been sent to the admin. You will be contacted shortly with delivery details.</p>
+            <p>Total Amount Due: <strong>$${totalPrice}</strong></p>
+            <div style="background-color: #fff3cd; border-left: 4px solid #ff9800; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <p style="margin: 0; color: #333;"><strong>📝 Next Steps:</strong></p>
+                <p style="margin: 10px 0 0 0; color: #333;">1. Send $${totalPrice} to <strong>${adminContactInfo.cashApp}</strong></p>
+                <p style="margin: 10px 0 0 0; color: #333;">2. Contact me to confirm payment:</p>
+                <p style="margin: 5px 0 0 20px; color: #333;">📱 ${adminContactInfo.phone}</p>
+                <p style="margin: 5px 0 0 20px; color: #333;">📧 ${adminContactInfo.gmail}</p>
+            </div>
             <p style="margin-top: 20px; color: #999; font-size: 0.9rem;">
-                If you have any questions, reach out using the contact information provided.
+                Your order has been added to the admin dashboard and is awaiting payment confirmation.
             </p>
             <button class="purchase-btn" onclick="closeProductModal()" style="margin-top: 20px;">Close</button>
         </div>
@@ -238,7 +263,7 @@ function displayAdminDashboard() {
         row.innerHTML = `
             <td class="order-number">${index + 1}</td>
             <td>${msg.productName}</td>
-            <td>$${msg.productPrice === 0 ? 'FREE' : msg.productPrice.toFixed(2)}</td>
+            <td>$${msg.totalPrice.toFixed(2)}</td>
             <td>
                 <div class="quantity-controls">
                     <button class="quantity-btn" onclick="decreaseOrderQuantity(${index})">−</button>
@@ -246,8 +271,9 @@ function displayAdminDashboard() {
                     <button class="quantity-btn" onclick="increaseOrderQuantity(${index})">+</button>
                 </div>
             </td>
-            <td class="notes-cell">${msg.notes || 'No notes'}</td>
+            <td class="notes-cell">${msg.notes}</td>
             <td class="time-cell">${msg.timestamp}</td>
+            <td class="status-cell">${msg.status}</td>
             <td><button class="delete-btn" onclick="deleteMessage(${index})">Delete</button></td>
         `;
         tableBody.appendChild(row);
@@ -257,6 +283,8 @@ function displayAdminDashboard() {
 // Update quantity in admin
 function increaseOrderQuantity(index) {
     adminMessages[index].quantity += 1;
+    // Recalculate total price
+    adminMessages[index].totalPrice = adminMessages[index].productPrice * adminMessages[index].quantity;
     localStorage.setItem('adminMessages', JSON.stringify(adminMessages));
     displayAdminDashboard();
 }
@@ -264,6 +292,8 @@ function increaseOrderQuantity(index) {
 function decreaseOrderQuantity(index) {
     if (adminMessages[index].quantity > 1) {
         adminMessages[index].quantity -= 1;
+        // Recalculate total price
+        adminMessages[index].totalPrice = adminMessages[index].productPrice * adminMessages[index].quantity;
         localStorage.setItem('adminMessages', JSON.stringify(adminMessages));
         displayAdminDashboard();
     }
@@ -289,13 +319,46 @@ function clearAllMessages() {
 
 // Edit contact info
 function editContactInfo() {
-    const newEmail = prompt('Enter your Gmail address:', adminGmail);
-    if (newEmail && newEmail.trim()) {
-        adminGmail = newEmail.trim();
-        localStorage.setItem('adminGmail', adminGmail);
-        document.getElementById('displayGmail').textContent = adminGmail;
-        alert('✅ Gmail updated successfully!');
-    }
+    const form = `
+        <div style="text-align: left;">
+            <p>Cash App: <input type="text" id="editCashApp" value="${adminContactInfo.cashApp}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; margin-bottom: 10px;"></p>
+            <p>Gmail: <input type="email" id="editGmail" value="${adminContactInfo.gmail}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; margin-bottom: 10px;"></p>
+            <p>Phone: <input type="tel" id="editPhone" value="${adminContactInfo.phone}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; margin-bottom: 10px;"></p>
+        </div>
+    `;
+    
+    const modal = document.getElementById('productModal');
+    const details = document.getElementById('productDetails');
+    
+    details.innerHTML = `
+        <div class="confirmation-modal">
+            <h3>Edit Contact Information</h3>
+            ${form}
+            <div class="confirmation-buttons" style="margin-top: 20px;">
+                <button class="btn-yes" onclick="saveContactInfo()">Save</button>
+                <button class="btn-no" onclick="closeProductModal()">Cancel</button>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.add('show');
+}
+
+// Save contact info
+function saveContactInfo() {
+    adminContactInfo.cashApp = document.getElementById('editCashApp').value;
+    adminContactInfo.gmail = document.getElementById('editGmail').value;
+    adminContactInfo.phone = document.getElementById('editPhone').value;
+    
+    localStorage.setItem('adminContactInfo', JSON.stringify(adminContactInfo));
+    
+    // Update display
+    document.getElementById('displayCashApp').textContent = adminContactInfo.cashApp;
+    document.getElementById('displayGmail').textContent = adminContactInfo.gmail;
+    document.getElementById('displayPhone').textContent = adminContactInfo.phone;
+    
+    closeProductModal();
+    alert('✅ Contact information updated successfully!');
 }
 
 // Logout from admin
