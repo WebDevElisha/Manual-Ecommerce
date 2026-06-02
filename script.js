@@ -128,7 +128,7 @@ function openProductModal(productId) {
         </div>
         <div class="notes-section">
             <h4>Notes (Required for payment confirmation)</h4>
-            <textarea id="notesInput" placeholder="Add any notes or special requests, (you may have dmed me, but what is your cashtag?)"></textarea>
+            <textarea id="notesInput" placeholder="Add any notes or special requests, (you may have dmed me, but what is your cashtag, And contact method info E.g. Social media handle)"></textarea>
         </div>
         <button class="purchase-btn" onclick="showPurchaseConfirmation(${product.id})">Purchase</button>
     `;
